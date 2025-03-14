@@ -4,16 +4,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.calculator.ui.theme.CalculatorTheme
 import com.example.calculator.databinding.ActivityMainBinding
 
 class MainActivity : ComponentActivity() {
@@ -94,14 +84,23 @@ class MainActivity : ComponentActivity() {
         return result
     }
 
-    private fun timesDivisionCalculate(passedList: MutableList<Any>): MutableList<Any> {
+    private fun timesDivisionCalculate(passedList: MutableList<Any>): MutableList<Any>{
+        var list = passedList
+        while(list.contains('x') || list.contains('/')){
+            list = calcTimesDiv(list)
+        }
+        return list
+    }
+
+    private fun calcTimesDiv(passedList: MutableList<Any>): MutableList<Any> {
         val newList = mutableListOf<Any>()
         var restartIndex = passedList.size
+
         for(i in passedList.indices){
             if(passedList[i] is Char && i != passedList.lastIndex && i < restartIndex){
-                var operator = passedList[i]
-                var prevDigit = passedList[i - 1] as Float
-                var nextDigit = passedList[i + 1] as Float
+                val operator = passedList[i]
+                val prevDigit = passedList[i - 1] as Float
+                val nextDigit = passedList[i + 1] as Float
                 when(operator){
                     'x' ->{
                         newList.add(prevDigit * nextDigit)
@@ -109,6 +108,7 @@ class MainActivity : ComponentActivity() {
                     }
                     '/' ->{
                         newList.add(prevDigit / nextDigit)
+                        restartIndex = i + 1
                     }
                     else ->{
                         newList.add(prevDigit)
